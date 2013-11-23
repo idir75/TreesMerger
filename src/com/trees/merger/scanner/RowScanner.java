@@ -29,14 +29,6 @@ public class RowScanner {
 	 * An <code>java.lang.Integer</code> that represents the value associated to the node.
 	 */
 	private Integer fNodeValue;
-	/**
-	 * A <code>java.lang.String</code> used as a delimiter when scanning a row.
-	 */
-	private String fDelimiter;
-	/**
-	 * The string that is scanned by the scanner.
-	 */
-	private String fStringToScan;
 
 	/**
 	 * <p>
@@ -45,22 +37,11 @@ public class RowScanner {
 	 * @param pRow the row to scan.
 	 */
 	public RowScanner(final String pRow) {
-		fStringToScan = pRow;
+		String[] rowParts = pRow.split(Constants.COLON_DELIMITER);
+		fNodePath = rowParts[0];
+		fNodeValue = new Integer(rowParts[1]);
+		fScanner = new Scanner(fNodePath);
 		setDelimiter();
-		fScanner = new Scanner(pRow);
-		if (fDelimiter != null) {
-			fScanner.useDelimiter(fDelimiter);
-		}
-
-		//Only when the row to scan is a line (a node path followed by " : " and followed by a node value) in the flat text file.
-		if (Constants.COLON_DELIMITER.equals(fDelimiter)) {
-			if (fScanner.hasNext()) {
-				fNodePath = fScanner.next();
-			}
-			if (fScanner.hasNextInt()) {
-				fNodeValue = fScanner.nextInt();
-			}
-		}
 	}
 
 	/**
@@ -107,20 +88,18 @@ public class RowScanner {
 	 * </p>
 	 */
 	public void setDelimiter() {
-		//Start with the COLON_DELIMITER
-		if (fStringToScan.indexOf(Constants.COLON_DELIMITER) > -1) {
-			fDelimiter = Constants.COLON_DELIMITER;
-		} else if (fStringToScan.indexOf(Constants.DOT_STR) > -1) {
-			fDelimiter = Constants.DOT_DELIMITER;
-		} else if (fStringToScan.indexOf(Constants.SLASH_DELIMITER) > -1) {
-			fDelimiter = Constants.SLASH_DELIMITER;
+		if (fNodePath.indexOf(Constants.DOT_STR) > -1) {
+			fScanner.useDelimiter(Constants.DOT_DELIMITER);
+		} else if (fNodePath.indexOf(Constants.SLASH_DELIMITER) > -1) {
+			fScanner.useDelimiter(Constants.SLASH_DELIMITER);
 		}
 	}
 
-	/**
-	 * @return the delimiter of the used scanner.
-	 */
-	public String getDelimiter() {
-		return fDelimiter;
+	public Scanner getScanner() {
+		return fScanner;
+	}	
+
+	public void SetScanner(final Scanner pScanner) {
+		fScanner = pScanner;
 	}
 }

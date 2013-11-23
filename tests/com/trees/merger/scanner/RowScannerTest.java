@@ -32,23 +32,23 @@ public class RowScannerTest extends TestCase {
 	public void testSetDelimiter() {
 		String row = "A/B/C : 3";
 		RowScanner rowScanner = new RowScanner(row);
-		assertEquals(" : ", rowScanner.getDelimiter());
+		assertEquals("/", rowScanner.getScanner().delimiter().toString());
 	}
 
 	public void testSetDelimiter2() {
-		String row = "A/B/C";
+		String row = "A/B/C : 1";
 		RowScanner rowScanner = new RowScanner(row);
-		assertEquals("/", rowScanner.getDelimiter());
+		assertEquals("/", rowScanner.getScanner().delimiter().toString());
 	}
 
 	public void testSetDelimiter3() {
-		String row = "A1.B1.C1.D";
+		String row = "A1.B1.C1.D : 3";
 		RowScanner rowScanner = new RowScanner(row);
-		assertEquals("\\.", rowScanner.getDelimiter());
+		assertEquals("\\.", rowScanner.getScanner().delimiter().toString());
 	}
 
 	public void testScanNodePath() {
-		String row = "A/B/C";
+		String row = "A/B/C : 2";
 		RowScanner rowScanner = new RowScanner(row);
 		List<String> nodePathKeys = rowScanner.nodePathAsMapKeys();
 		assertEquals(3, nodePathKeys.size());
@@ -58,7 +58,7 @@ public class RowScannerTest extends TestCase {
 	}
 
 	public void testScanNodePath2() {
-		String row = "A1.B2.C4.D";
+		String row = "A1.B2.C4.D : 5";
 		RowScanner rowScanner = new RowScanner(row);
 		List<String> nodePathKeys = rowScanner.nodePathAsMapKeys();
 		assertEquals(4, nodePathKeys.size());

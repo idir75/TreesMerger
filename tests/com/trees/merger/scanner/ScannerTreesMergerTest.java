@@ -11,9 +11,9 @@ import junit.framework.TestCase;
 
 public class ScannerTreesMergerTest extends TestCase {
 
-	private static final String FILE1_PATH = "testSamples" + File.separator + "file1.txt";
-	private static final String FILE2_PATH = "testSamples" + File.separator + "file2.txt";
-	private static final String RESULT_FILE_PATH = "testSamples" + File.separator + "resutl.txt";
+	private static final String FILE1_PATH = "samples" + File.separator + "tfile1.txt";
+	private static final String FILE2_PATH = "samples" + File.separator + "tfile2.txt";
+	private static final String RESULT_FILE_PATH = "samples" + File.separator + "tresutl.txt";
 
 	public void setUp() throws Exception {
 		super.setUp();

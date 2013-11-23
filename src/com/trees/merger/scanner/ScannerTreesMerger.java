@@ -105,8 +105,7 @@ public class ScannerTreesMerger {
 				continue;
 			}
 			Integer nodeValue = rowScanner.getNodeValue();
-			RowScanner nodePathScanner = new RowScanner(nodePath);
-			List<String> nodePathList = nodePathScanner.nodePathAsMapKeys();
+			List<String> nodePathList = rowScanner.nodePathAsMapKeys();
 			for (String nodePathAsKey : nodePathList) {
 				Integer oldNodeValue = pMap.get(nodePathAsKey);
 				if (oldNodeValue != null && oldNodeValue.intValue() > 0) {
