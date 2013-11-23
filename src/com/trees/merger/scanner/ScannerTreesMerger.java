@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
  * A row represents a path to a node of the tree, and a value associated to the node. The node path and the node value are separated by " : ".
  * Example of a row : "A/B/C : 3", where "A/B/C" is the path to the node "C", and 3 is the value associated to the node "C".
  * </p>
- * @author Idir DAHMOUH.
+ * @author Idir.
  */
 public class ScannerTreesMerger {
 

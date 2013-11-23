@@ -2,7 +2,7 @@ package com.trees.merger.scanner;
 
 /**
  * Constants class.
- * @author Idir DAHMOUH.
+ * @author Idir.
  */
 public final class Constants {
 

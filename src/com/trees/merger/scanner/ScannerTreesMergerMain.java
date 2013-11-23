@@ -2,6 +2,10 @@ package com.trees.merger.scanner;
 
 import java.io.File;
 
+/**
+ * Main class test.
+ * @author Idir.
+ */
 public class ScannerTreesMergerMain {
 
 	public static void main(String[] args) {
