@@ -30,6 +30,8 @@ public class RowScanner {
 	 */
 	private Integer fNodeValue;
 
+	private String fRow;
+
 	/**
 	 * <p>
 	 * Constructor.
@@ -37,7 +39,8 @@ public class RowScanner {
 	 * @param pRow the row to scan.
 	 */
 	public RowScanner(final String pRow) {
-		String[] rowParts = pRow.split(Constants.COLON_DELIMITER);
+		fRow = pRow;
+		String[] rowParts = fRow.split(Constants.COLON_DELIMITER);
 		fNodePath = rowParts[0];
 		fNodeValue = new Integer(rowParts[1]);
 		fScanner = new Scanner(fNodePath);
@@ -80,6 +83,13 @@ public class RowScanner {
 			rowKeys.add(previousKey);
 		}
 		return rowKeys;
+	}
+
+	public String replaceDelimiters() {
+		if (fRow.indexOf(Constants.DOT_STR) > -1) {
+			return fRow.replaceAll(Constants.DOT_DELIMITER, Constants.SLASH_DELIMITER);
+		}
+		return fRow;
 	}
 
 	/**

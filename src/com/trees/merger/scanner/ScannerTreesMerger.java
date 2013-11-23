@@ -2,7 +2,6 @@ package com.trees.merger.scanner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
-
 import org.apache.log4j.Logger;
 
 /**
@@ -28,7 +26,7 @@ public class ScannerTreesMerger {
 	/**
 	 * A logger.
 	 */
-	public static final Logger fLogger = Logger.getLogger(ScannerTreesMerger.class);
+	private static final Logger fLogger = Logger.getLogger(ScannerTreesMerger.class);
 
 	/**
 	 * <p>
@@ -41,27 +39,36 @@ public class ScannerTreesMerger {
 	 */
 	public void mergeTwoTreesByScanner(final String pFirstTreeFilePath, final String pSecondTreeFilePath, final String pMergedTreesFilePath) {
 		Map<String, Integer> mergedTreesMap = new TreeMap<String, Integer>();
-		Scanner firstTreeFileScanner = getScannerFromFile(pFirstTreeFilePath);
-		Scanner secondTreeFileScanner = getScannerFromFile(pSecondTreeFilePath);
+		Scanner firstTreeFileScanner = getFileScanner(pFirstTreeFilePath);
+		Scanner secondTreeFileScanner = getFileScanner(pSecondTreeFilePath);
 		if (firstTreeFileScanner == null && secondTreeFileScanner == null) {
 			return;
 		}
 
 		//No need to merge. The result file contains the content of the file with path pSecondTreeFilePath.
 		if (firstTreeFileScanner == null || !firstTreeFileScanner.hasNextLine()) {
-			copyFile(pSecondTreeFilePath, pMergedTreesFilePath);
+			String secondTreeFileContent = copyFileDataWithScanner(secondTreeFileScanner, pMergedTreesFilePath);
+			serializeDataIntoFile(pMergedTreesFilePath, secondTreeFileContent);
+			if (secondTreeFileScanner != null) {
+				secondTreeFileScanner.close();
+			}
 			return;
 		}
 
 		//No need to merge. The result file contains the content of the file with path pFirstTreeFilePath.
 		if (secondTreeFileScanner == null || !secondTreeFileScanner.hasNextLine()) {
-			copyFile(pFirstTreeFilePath, pMergedTreesFilePath);
+			String firstTreeFileContent = copyFileDataWithScanner(firstTreeFileScanner, pMergedTreesFilePath);
+			serializeDataIntoFile(pMergedTreesFilePath, firstTreeFileContent);
+			if (firstTreeFileScanner != null) {
+				firstTreeFileScanner.close();
+			}
 			return;
 		}
-		parseFileIntoMapByScanner(firstTreeFileScanner, mergedTreesMap);
-		parseFileIntoMapByScanner(secondTreeFileScanner, mergedTreesMap);
-		String mergedTreesAsString = mapToString(mergedTreesMap);
-		writeStringIntoFile(pMergedTreesFilePath, mergedTreesAsString);
+
+		getMapFromFileByScanner(firstTreeFileScanner, mergedTreesMap);
+		getMapFromFileByScanner(secondTreeFileScanner, mergedTreesMap);
+		String mergedTreesMapFormmatted = formatMap(mergedTreesMap);
+		serializeDataIntoFile(pMergedTreesFilePath, mergedTreesMapFormmatted);
 		if (firstTreeFileScanner != null) {
 			firstTreeFileScanner.close();
 		}
@@ -72,12 +79,12 @@ public class ScannerTreesMerger {
 
 	/**
 	 * <p>
-	 * Construct a <code>java.util.Scanner</code> from a file given by its path.
+	 * Create a <code>java.util.Scanner</code> from a file given by its path.
 	 * </p>
 	 * @param pFilePath the path of the file used to construct the <code>java.util.Scanner</code>
 	 * @return a <code>java.util.Scanner</code>
 	 */
-	public Scanner getScannerFromFile(final String pFilePath) {
+	public Scanner getFileScanner(final String pFilePath) {
 		Scanner scanner = null;
 		try {
 			scanner = new Scanner(new File(pFilePath));
@@ -94,12 +101,13 @@ public class ScannerTreesMerger {
 	 * @param pFileScanner the <code>java.util.Scanner</code> used to parse the text file.
 	 * @param pMap the <code>java.util.Map</code> created from the text file.
 	 */
-	public void parseFileIntoMapByScanner(final Scanner pFileScanner, Map<String, Integer> pMap) {
+	public void getMapFromFileByScanner(final Scanner pFileScanner, Map<String, Integer> pMap) {
 		if (pMap == null) {
 			pMap = new TreeMap<String, Integer>();
 		}
 		while (pFileScanner.hasNextLine()) {
 			RowScanner rowScanner = new RowScanner(pFileScanner.nextLine());
+			//No handle for lines with empty path part.
 			String nodePath = rowScanner.getNodePath();
 			if (nodePath == null || nodePath.length() == 0) {
 				continue;
@@ -124,7 +132,7 @@ public class ScannerTreesMerger {
 	 * @param pMap the <code>java.util.Map</code> used to create the returned <code>java.lang.String</code>
 	 * @return a <code>java.lang.String</code>
 	 */
-	public String mapToString(final Map<String, Integer> pMap) {
+	public String formatMap(final Map<String, Integer> pMap) {
 		StringBuilder result = new StringBuilder();
 		for (Entry<String, Integer> entry : pMap.entrySet()) {
 			result.append(entry.getKey());
@@ -143,13 +151,13 @@ public class ScannerTreesMerger {
 	 * Write a <code>java.lang.String</code> into a file given by its parameter.
 	 * </p>
 	 * @param pResultFilePath the path to the file used to serialize the <code>java.lang.String</code>
-	 * @param pStr the <code>java.lang.String</code> to write into a file.
+	 * @param pData the <code>java.lang.String</code> to write into a file.
 	 */
-	public void writeStringIntoFile(final String pResultFilePath, final String pStr) {
+	public void serializeDataIntoFile(final String pResultFilePath, final String pData) {
 		FileWriter fileWriter = null;
 		try {
 			fileWriter = new FileWriter(pResultFilePath);
-			fileWriter.write(pStr);
+			fileWriter.write(pData);
 			fileWriter.close();
 		} catch (IOException e) {
 			fLogger.warn("Error while writing into file : " + pResultFilePath, e);
@@ -157,37 +165,29 @@ public class ScannerTreesMerger {
 	}
 
 	/**
-	 * Create a copy of a file.
+	 * Create a copy of a file using a <code>java.util.Scanner</code>
 	 * @param pSourcePath the path to the file to copy.
-	 * @param pCopyPath the path to the created copy.
+	 * @param pCopyFilePath the path to the created copy.
+	 * @throws IOException when an error occurs.
 	 */
-	public void copyFile(final String pSourcePath, final String pCopyPath) {
-		FileReader fileReader = null;
-		FileWriter fileWriter = null;
-		try {
-			fileReader = new FileReader(new File(pSourcePath));
-		} catch (FileNotFoundException e) {
-			fLogger.warn("Error while opening the file : " + pSourcePath, e);
-			return;
-		}
-		try {
-			fileWriter = new FileWriter(new File(pCopyPath));
-		} catch (IOException e) {
-			fLogger.warn("Error while opening the file : " + pCopyPath, e);
-			return;
-		}
-		int charsRead;
-		char[] charsBuffer = new char[Constants.BUFFER_SIZE];
-		try {
-			while ((charsRead = fileReader.read(charsBuffer, 0, Constants.BUFFER_SIZE)) > 0) {
-				fileWriter.write(charsBuffer, 0, charsRead);
+	public String copyFileDataWithScanner(final Scanner pFileScanner, final String pCopyFilePath) {
+		StringBuilder fileContent = new StringBuilder();
+		while (pFileScanner.hasNextLine()) {
+			String row = pFileScanner.nextLine();
+			RowScanner rowScanner = new RowScanner(row);
+			//No handle for lines with empty path part.
+			String nodePath = rowScanner.getNodePath();
+			if (nodePath == null || nodePath.length() == 0) {
+				continue;
 			}
-			fileReader.close();
-			fileWriter.close();
-		} catch (IOException e) {
-			fLogger.warn("Error while copying the file : " + pSourcePath + " into the file : " + pCopyPath, e);
+			/*if (row.indexOf(Constants.DOT_STR) > -1) {
+				fileContent.append(row.replaceAll(Constants.DOT_DELIMITER, Constants.SLASH_DELIMITER));
+			} else {
+				fileContent.append(row);
+			}*/
+			fileContent.append(rowScanner.replaceDelimiters());
+			fileContent.append(Constants.NEW_LINE_STR);
 		}
+		return fileContent.substring(0, fileContent.length() - 1);
 	}
-
 }
-
