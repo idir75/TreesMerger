@@ -188,31 +188,6 @@ public class ScannerTreesMerger {
 		} catch (IOException e) {
 			fLogger.warn("Error while copying the file : " + pSourcePath + " into the file : " + pCopyPath, e);
 		}
-		/*InputStream inputStream = null;
-		OutputStream outputStream = null;
-		try {
-			inputStream = new FileInputStream(new File(pSourcePath));
-		} catch (FileNotFoundException e) {
-			fLogger.warn("Error while trying to open the file : " + pSourcePath, e);
-			return;
-		}
-		try {
-			outputStream = new FileOutputStream(new File(pCopyPath));
-		} catch (FileNotFoundException e) {
-			fLogger.warn("Error while trying to open the file : " + pCopyPath, e);
-			return;
-		}
-		byte[] buffer = new byte[Constants.BUFFER_SIZE];
-		int bytesRead;
-		try {
-			while ((bytesRead = inputStream.read(buffer)) > 0) {
-				outputStream.write(buffer, 0, bytesRead);
-			}
-			inputStream.close();
-			outputStream.close();
-		} catch (IOException e) {
-			fLogger.warn("Error while trying to create a copy of the file : " + pSourcePath + ", into the file : " + pCopyPath, e);
-		}*/
 	}
 
 }
