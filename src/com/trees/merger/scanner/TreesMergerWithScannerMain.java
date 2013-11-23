@@ -2,14 +2,16 @@ package com.trees.merger.scanner;
 
 import java.io.File;
 
+import com.trees.merger.Constants;
+
 /**
  * Main class test.
  * @author Idir.
  */
-public class ScannerTreesMergerMain {
+public class TreesMergerWithScannerMain {
 
 	public static void main(String[] args) {
-		ScannerTreesMerger treeMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner treeMerger = new TreesMergerWithScanner();
 		treeMerger.mergeTwoTreesByScanner(Constants.SAMPLES_DIR + File.separator + "File1.txt", Constants.SAMPLES_DIR + File.separator + "File2.txt", Constants.SAMPLES_DIR + File.separator + "Result.txt");
 
 		//File11 doesn't exist

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.trees.merger.Constants;
+
 
 /**
  * <p>
@@ -15,7 +17,7 @@ import java.util.Scanner;
  * <p>
  * @author Idir.
  */
-public class RowScanner {
+public class RowParserWithScanner {
 
 	/**
 	 * A <code>java.util.Scanner</code>
@@ -38,7 +40,7 @@ public class RowScanner {
 	 * </p>
 	 * @param pRow the row to scan.
 	 */
-	public RowScanner(final String pRow) {
+	public RowParserWithScanner(final String pRow) {
 		fRow = pRow;
 		String[] rowParts = fRow.split(Constants.COLON_DELIMITER);
 		fNodePath = rowParts[0];

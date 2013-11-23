@@ -1,4 +1,4 @@
-package com.trees.merger.scanner;
+package com.trees.merger;
 
 /**
  * Constants class.

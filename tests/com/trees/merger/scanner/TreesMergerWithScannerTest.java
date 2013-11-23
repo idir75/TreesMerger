@@ -9,7 +9,7 @@ import java.util.TreeMap;
 import junit.framework.TestCase;
 
 
-public class ScannerTreesMergerTest extends TestCase {
+public class TreesMergerWithScannerTest extends TestCase {
 
 	private static final String FILE1_PATH = "samples" + File.separator + "tfile1.txt";
 	private static final String FILE2_PATH = "samples" + File.separator + "tfile2.txt";
@@ -37,7 +37,7 @@ public class ScannerTreesMergerTest extends TestCase {
 
 	public void testSerializeDataIntoFile() {
 		String str = "A.B : 1\nA.B.C : 1\nA.B.D : 3\nA.C : 1\nA2/B/C : 4";
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		scannerTreesMerger.serializeDataIntoFile(RESULT_FILE_PATH, str);
 		Scanner scanner = scannerTreesMerger.getFileScanner(RESULT_FILE_PATH);
 		assertEquals("A.B : 1", scanner.nextLine());
@@ -49,7 +49,7 @@ public class ScannerTreesMergerTest extends TestCase {
 	}
 
 	public void testSerializeDataIntoFile2() {
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		String str = "A : 8\nA/B : 7\nA/B/C : 2\nA/B/D : 3\nA/C : 1\nA1 : 1\nA1/B1 : 1\nA1/B1/C : 1\nA2 : 4\nA2/B : 4\nA2/B/C : 4";
 		scannerTreesMerger.serializeDataIntoFile(RESULT_FILE_PATH, str);
 		Scanner scanner = scannerTreesMerger.getFileScanner(RESULT_FILE_PATH);
@@ -72,7 +72,7 @@ public class ScannerTreesMergerTest extends TestCase {
 		map.put("A/B", new Integer(1));
 		map.put("A/B/C", new Integer(1));
 		map.put("A1/B1/C", new Integer(1));
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		String mapAsString = scannerTreesMerger.formatMap(map);
 		assertEquals("A/B : 1\nA/B/C : 1\nA1/B1/C : 1", mapAsString);
 	}
@@ -84,13 +84,13 @@ public class ScannerTreesMergerTest extends TestCase {
 		map.put("A.B.D", new Integer(3));
 		map.put("A.C", new Integer(1));
 		map.put("A2/B/C", new Integer(4));
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		String mapAsString = scannerTreesMerger.formatMap(map);
 		assertEquals("A.B : 1\nA.B.C : 1\nA.B.D : 3\nA.C : 1\nA2/B/C : 4", mapAsString);
 	}
 
 	public void testGetMapFromFileByScanner() {
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		Map<String, Integer> map = new TreeMap<String, Integer>();
 		String str = "A.B : 1\nA.B.C : 1\nA.B.D : 3\nA.C : 1\nA2/B/C : 4";
 		scannerTreesMerger.serializeDataIntoFile(FILE1_PATH, str);
@@ -111,7 +111,7 @@ public class ScannerTreesMergerTest extends TestCase {
 	}
 
 	public void testGetMapFromFileByScanner2() {
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		Map<String, Integer> map = new TreeMap<String, Integer>();
 		String str = "A/B/C : 1\nA/B : 1\nA1/B1/C : 1";
 		scannerTreesMerger.serializeDataIntoFile(FILE1_PATH, str);
@@ -130,7 +130,7 @@ public class ScannerTreesMergerTest extends TestCase {
 	}
 
 	public void testMergeTwoTreesByScanner() {
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		String str1 = "A/B/C : 1\nA/B : 1\nA1/B1/C : 1";
 		scannerTreesMerger.serializeDataIntoFile(FILE1_PATH, str1);
 		String str2 = "A.C : 1\nA.B : 1\nA.B.D : 3\nA.B.C : 1\nA2/B/C : 4";
@@ -152,7 +152,7 @@ public class ScannerTreesMergerTest extends TestCase {
 	}
 
 	public void testMergeTwoTreesByScanner2() {
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		String str1 = "A/B/C : 1\nA/B : 1\nA1/B1/C : 1";
 		scannerTreesMerger.serializeDataIntoFile(FILE1_PATH, str1);
 		String str2 = "A/B/C : 1\nA/B : 1\nA1/B1/C : 1";
@@ -169,7 +169,7 @@ public class ScannerTreesMergerTest extends TestCase {
 	}
 
 	public void testMergeTwoTreesByScanner3() {
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		String str1 = "A.C : 1\nA.B : 1\nA.B.D : 3\nA.B.C : 1\nA2/B/C : 4";
 		scannerTreesMerger.serializeDataIntoFile(FILE1_PATH, str1);
 		String str2 = "A.C : 1\nA.B : 1\nA.B.D : 3\nA.B.C : 1\nA2/B/C : 4";
@@ -188,7 +188,7 @@ public class ScannerTreesMergerTest extends TestCase {
 	}
 
 	public void testMergeTwoTreesByScanner4() {
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		String str1 = "A : 8\nA/B : 7\nA/B/C : 2\nA/B/D : 3\nA/C : 1\nA1 : 1\nA1/B1 : 1\nA1/B1/C : 1\nA2 : 4\nA2/B : 4\nA2/B/C : 4";
 		scannerTreesMerger.serializeDataIntoFile(FILE1_PATH, str1);
 		String str2 = "A.C : 1\nA.B : 1\nA.B.D : 3\nA.B.C : 1\nA2/B/C : 4";
@@ -210,7 +210,7 @@ public class ScannerTreesMergerTest extends TestCase {
 	}
 
 	public void testMergeTwoTreesByScannerNoFile1() {
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		String str2 = "A.C : 1\nA.B : 1\nA.B.D : 3\nA.B.C : 1\nA2/B/C : 4";
 		scannerTreesMerger.serializeDataIntoFile(FILE2_PATH, str2);
 		scannerTreesMerger.mergeTwoTreesByScanner("", FILE2_PATH, RESULT_FILE_PATH);
@@ -224,7 +224,7 @@ public class ScannerTreesMergerTest extends TestCase {
 	}
 
 	public void testMergeTwoTreesByScannerNoFile2() {
-		ScannerTreesMerger scannerTreesMerger = new ScannerTreesMerger();
+		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
 		String str1 = "A/B/C : 1\nA/B : 1\nA1/B1/C : 1";
 		scannerTreesMerger.serializeDataIntoFile(FILE1_PATH, str1);
 		scannerTreesMerger.mergeTwoTreesByScanner(FILE1_PATH, "", RESULT_FILE_PATH);

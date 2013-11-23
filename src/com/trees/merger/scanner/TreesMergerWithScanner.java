@@ -11,6 +11,8 @@ import java.util.Scanner;
 import java.util.TreeMap;
 import org.apache.log4j.Logger;
 
+import com.trees.merger.Constants;
+
 /**
  * <p>
  * A class that merges two trees into one tree.
@@ -21,12 +23,12 @@ import org.apache.log4j.Logger;
  * </p>
  * @author Idir.
  */
-public class ScannerTreesMerger {
+public class TreesMergerWithScanner {
 
 	/**
 	 * A logger.
 	 */
-	private static final Logger fLogger = Logger.getLogger(ScannerTreesMerger.class);
+	private static final Logger fLogger = Logger.getLogger(TreesMergerWithScanner.class);
 
 	/**
 	 * <p>
@@ -106,7 +108,7 @@ public class ScannerTreesMerger {
 			pMap = new TreeMap<String, Integer>();
 		}
 		while (pFileScanner.hasNextLine()) {
-			RowScanner rowScanner = new RowScanner(pFileScanner.nextLine());
+			RowParserWithScanner rowScanner = new RowParserWithScanner(pFileScanner.nextLine());
 			//No handle for lines with empty path part.
 			String nodePath = rowScanner.getNodePath();
 			if (nodePath == null || nodePath.length() == 0) {
@@ -174,7 +176,7 @@ public class ScannerTreesMerger {
 		StringBuilder fileContent = new StringBuilder();
 		while (pFileScanner.hasNextLine()) {
 			String row = pFileScanner.nextLine();
-			RowScanner rowScanner = new RowScanner(row);
+			RowParserWithScanner rowScanner = new RowParserWithScanner(row);
 			//No handle for lines with empty path part.
 			String nodePath = rowScanner.getNodePath();
 			if (nodePath == null || nodePath.length() == 0) {
