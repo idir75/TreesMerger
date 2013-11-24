@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.trees.merger.Constants;
+import com.trees.merger.RowParser;
 
 
 /**
@@ -17,7 +18,7 @@ import com.trees.merger.Constants;
  * <p>
  * @author Idir.
  */
-public class RowParserWithScanner {
+public class RowParserWithScanner implements RowParser {
 
 	/**
 	 * A <code>java.util.Scanner</code>
@@ -109,7 +110,7 @@ public class RowParserWithScanner {
 
 	public Scanner getScanner() {
 		return fScanner;
-	}	
+	}
 
 	public void SetScanner(final Scanner pScanner) {
 		fScanner = pScanner;

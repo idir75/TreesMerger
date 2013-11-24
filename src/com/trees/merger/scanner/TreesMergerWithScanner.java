@@ -9,9 +9,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
+
 import org.apache.log4j.Logger;
 
 import com.trees.merger.Constants;
+import com.trees.merger.FileParser;
 
 /**
  * <p>
@@ -49,27 +51,29 @@ public class TreesMergerWithScanner {
 
 		//No need to merge. The result file contains the content of the file with path pSecondTreeFilePath.
 		if (firstTreeFileScanner == null || !firstTreeFileScanner.hasNextLine()) {
-			String secondTreeFileContent = copyFileDataWithScanner(secondTreeFileScanner, pMergedTreesFilePath);
+			/*String secondTreeFileContent = copyFileData(secondTreeFileScanner, pMergedTreesFilePath);
 			serializeDataIntoFile(pMergedTreesFilePath, secondTreeFileContent);
 			if (secondTreeFileScanner != null) {
 				secondTreeFileScanner.close();
-			}
+			}*/
+			serializeDataWithoutMerging(secondTreeFileScanner, pMergedTreesFilePath);
 			return;
 		}
 
 		//No need to merge. The result file contains the content of the file with path pFirstTreeFilePath.
 		if (secondTreeFileScanner == null || !secondTreeFileScanner.hasNextLine()) {
-			String firstTreeFileContent = copyFileDataWithScanner(firstTreeFileScanner, pMergedTreesFilePath);
+			/*String firstTreeFileContent = copyFileData(firstTreeFileScanner, pMergedTreesFilePath);
 			serializeDataIntoFile(pMergedTreesFilePath, firstTreeFileContent);
 			if (firstTreeFileScanner != null) {
 				firstTreeFileScanner.close();
-			}
+			}*/
+			serializeDataWithoutMerging(firstTreeFileScanner, pMergedTreesFilePath);
 			return;
 		}
 
 		getMapFromFileByScanner(firstTreeFileScanner, mergedTreesMap);
 		getMapFromFileByScanner(secondTreeFileScanner, mergedTreesMap);
-		String mergedTreesMapFormmatted = formatMap(mergedTreesMap);
+		String mergedTreesMapFormmatted = formatMapToString(mergedTreesMap);
 		serializeDataIntoFile(pMergedTreesFilePath, mergedTreesMapFormmatted);
 		if (firstTreeFileScanner != null) {
 			firstTreeFileScanner.close();
@@ -77,6 +81,15 @@ public class TreesMergerWithScanner {
 		if (secondTreeFileScanner != null) {
 			secondTreeFileScanner.close();
 		}
+	}
+
+	public void serializeDataWithoutMerging(final Scanner pFileScanner, final String pResultFilePath) {
+		String secondTreeFileContent = copyFileData(pFileScanner, pResultFilePath);
+		serializeDataIntoFile(pResultFilePath, secondTreeFileContent);
+		if (pFileScanner != null) {
+			pFileScanner.close();
+		}
+		return;
 	}
 
 	/**
@@ -134,7 +147,7 @@ public class TreesMergerWithScanner {
 	 * @param pMap the <code>java.util.Map</code> used to create the returned <code>java.lang.String</code>
 	 * @return a <code>java.lang.String</code>
 	 */
-	public String formatMap(final Map<String, Integer> pMap) {
+	public String formatMapToString(final Map<String, Integer> pMap) {
 		StringBuilder result = new StringBuilder();
 		for (Entry<String, Integer> entry : pMap.entrySet()) {
 			result.append(entry.getKey());
@@ -172,7 +185,7 @@ public class TreesMergerWithScanner {
 	 * @param pCopyFilePath the path to the created copy.
 	 * @throws IOException when an error occurs.
 	 */
-	public String copyFileDataWithScanner(final Scanner pFileScanner, final String pCopyFilePath) {
+	public String copyFileData(final Scanner pFileScanner, final String pCopyFilePath) {
 		StringBuilder fileContent = new StringBuilder();
 		while (pFileScanner.hasNextLine()) {
 			String row = pFileScanner.nextLine();
@@ -182,11 +195,6 @@ public class TreesMergerWithScanner {
 			if (nodePath == null || nodePath.length() == 0) {
 				continue;
 			}
-			/*if (row.indexOf(Constants.DOT_STR) > -1) {
-				fileContent.append(row.replaceAll(Constants.DOT_DELIMITER, Constants.SLASH_DELIMITER));
-			} else {
-				fileContent.append(row);
-			}*/
 			fileContent.append(rowScanner.replaceDelimiters());
 			fileContent.append(Constants.NEW_LINE_STR);
 		}

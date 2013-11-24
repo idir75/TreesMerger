@@ -6,14 +6,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
+
+import com.trees.merger.Constants;
+
 import junit.framework.TestCase;
 
 
 public class TreesMergerWithScannerTest extends TestCase {
 
-	private static final String FILE1_PATH = "samples" + File.separator + "tfile1.txt";
-	private static final String FILE2_PATH = "samples" + File.separator + "tfile2.txt";
-	private static final String RESULT_FILE_PATH = "samples" + File.separator + "tresutl.txt";
+	private static final String FILE1_PATH = Constants.SAMPLES_DIR + File.separator + "tFile1.txt";
+	private static final String FILE2_PATH = Constants.SAMPLES_DIR + File.separator + "tFile2.txt";
+	private static final String RESULT_FILE_PATH = Constants.SAMPLES_DIR + File.separator + "tResutl.txt";
 
 	public void setUp() throws Exception {
 		super.setUp();
@@ -73,7 +76,7 @@ public class TreesMergerWithScannerTest extends TestCase {
 		map.put("A/B/C", new Integer(1));
 		map.put("A1/B1/C", new Integer(1));
 		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
-		String mapAsString = scannerTreesMerger.formatMap(map);
+		String mapAsString = scannerTreesMerger.formatMapToString(map);
 		assertEquals("A/B : 1\nA/B/C : 1\nA1/B1/C : 1", mapAsString);
 	}
 
@@ -85,7 +88,7 @@ public class TreesMergerWithScannerTest extends TestCase {
 		map.put("A.C", new Integer(1));
 		map.put("A2/B/C", new Integer(4));
 		TreesMergerWithScanner scannerTreesMerger = new TreesMergerWithScanner();
-		String mapAsString = scannerTreesMerger.formatMap(map);
+		String mapAsString = scannerTreesMerger.formatMapToString(map);
 		assertEquals("A.B : 1\nA.B.C : 1\nA.B.D : 3\nA.C : 1\nA2/B/C : 4", mapAsString);
 	}
 
