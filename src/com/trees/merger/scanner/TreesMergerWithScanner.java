@@ -12,9 +12,6 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
-import com.trees.merger.Constants;
-import com.trees.merger.FileParser;
-
 /**
  * <p>
  * A class that merges two trees into one tree.
@@ -23,7 +20,7 @@ import com.trees.merger.FileParser;
  * A row represents a path to a node of the tree, and a value associated to the node. The node path and the node value are separated by " : ".
  * Example of a row : "A/B/C : 3", where "A/B/C" is the path to the node "C", and 3 is the value associated to the node "C".
  * </p>
- * @author Idir.
+ * @author Idir DAHMOUH.
  */
 public class TreesMergerWithScanner {
 
@@ -42,39 +39,38 @@ public class TreesMergerWithScanner {
 	 * @param pMergedTreesFilePath the path to the file representing the tree obtained after merging operation.
 	 */
 	public void mergeTwoTreesByScanner(final String pFirstTreeFilePath, final String pSecondTreeFilePath, final String pMergedTreesFilePath) {
-		Map<String, Integer> mergedTreesMap = new TreeMap<String, Integer>();
 		Scanner firstTreeFileScanner = getFileScanner(pFirstTreeFilePath);
 		Scanner secondTreeFileScanner = getFileScanner(pSecondTreeFilePath);
+
+		//If the two tree files doesn't exist, do nothing.
 		if (firstTreeFileScanner == null && secondTreeFileScanner == null) {
 			return;
 		}
 
-		//No need to merge. The result file contains the content of the file with path pSecondTreeFilePath.
+		//When the first tree file doesn't exist, or it's empty : no need to merge. The result file contains the content of the pSecondTreeFilePath file with "/" delimiters.
 		if (firstTreeFileScanner == null || !firstTreeFileScanner.hasNextLine()) {
-			/*String secondTreeFileContent = copyFileData(secondTreeFileScanner, pMergedTreesFilePath);
-			serializeDataIntoFile(pMergedTreesFilePath, secondTreeFileContent);
-			if (secondTreeFileScanner != null) {
-				secondTreeFileScanner.close();
-			}*/
-			serializeDataWithoutMerging(secondTreeFileScanner, pMergedTreesFilePath);
+			copyFileWithoutMerging(secondTreeFileScanner, pMergedTreesFilePath);
 			return;
 		}
 
-		//No need to merge. The result file contains the content of the file with path pFirstTreeFilePath.
+		//When the second tree file doesn't exist, or it's empty : no need to merge. The result file contains the content of the pFirstTreeFilePath file with "/" delimiters.
 		if (secondTreeFileScanner == null || !secondTreeFileScanner.hasNextLine()) {
-			/*String firstTreeFileContent = copyFileData(firstTreeFileScanner, pMergedTreesFilePath);
-			serializeDataIntoFile(pMergedTreesFilePath, firstTreeFileContent);
-			if (firstTreeFileScanner != null) {
-				firstTreeFileScanner.close();
-			}*/
-			serializeDataWithoutMerging(firstTreeFileScanner, pMergedTreesFilePath);
+			copyFileWithoutMerging(firstTreeFileScanner, pMergedTreesFilePath);
 			return;
 		}
 
+		//Merge the file trees into a unique map.
+		Map<String, Integer> mergedTreesMap = new TreeMap<String, Integer>();
 		getMapFromFileByScanner(firstTreeFileScanner, mergedTreesMap);
 		getMapFromFileByScanner(secondTreeFileScanner, mergedTreesMap);
-		String mergedTreesMapFormmatted = formatMapToString(mergedTreesMap);
-		serializeDataIntoFile(pMergedTreesFilePath, mergedTreesMapFormmatted);
+
+		//Format the map of the merged trees as a string.
+		String mergedTreesMapFormatted = formatMapToString(mergedTreesMap);
+
+		//Serialize the string in a file.
+		serializeDataIntoFile(pMergedTreesFilePath, mergedTreesMapFormatted);
+
+		//Close the opened scanners.
 		if (firstTreeFileScanner != null) {
 			firstTreeFileScanner.close();
 		}
@@ -83,13 +79,68 @@ public class TreesMergerWithScanner {
 		}
 	}
 
-	public void serializeDataWithoutMerging(final Scanner pFileScanner, final String pResultFilePath) {
-		String secondTreeFileContent = copyFileData(pFileScanner, pResultFilePath);
-		serializeDataIntoFile(pResultFilePath, secondTreeFileContent);
+	/**
+	 * Copy the data of a file given by a <code>java.util.Scanner</code> into another file given by its path.
+	 * @param pFileScanner the <code>java.util.Scanner</code> of the data to serialize file.
+	 * @param pResultFilePath the file used to serialize the data.
+	 */
+	public void copyFileWithoutMerging(final Scanner pFileScanner, final String pResultFilePath) {
+		String fileData = getFileDataAsString(pFileScanner);
+		serializeDataIntoFile(pResultFilePath, fileData);
 		if (pFileScanner != null) {
 			pFileScanner.close();
 		}
 		return;
+	}
+
+	/**
+	 * <p>
+	 * Return the data of a file given by its scanner as a string.
+	 * </p>
+	 * @param pFileScanner the given file scanner.
+	 * @return the content
+	 */
+	public String getFileDataAsString(final Scanner pFileScanner) {
+		StringBuilder fileData = new StringBuilder();
+		while (pFileScanner.hasNextLine()) {
+			String row = pFileScanner.nextLine();
+			RowParserWithScanner rowScanner = new RowParserWithScanner(row);
+
+			//Case of a row that doesn't contain a " : " delimiter.
+			if (rowScanner.getScanner() == null) {
+				continue;
+			}
+
+			//Case of a row that contains a " : " delimiter, but the node path part is empty.
+			String nodePath = rowScanner.getNodePath();
+			if (nodePath == null || nodePath.length() == 0) {
+				continue;
+			}
+			fileData.append(rowScanner.replaceRowDelimiters());
+			fileData.append(Constants.NEW_LINE_PATTERN);
+		}
+		if (fileData.length() == 0) {
+			return "";
+		}
+		return fileData.substring(0, fileData.length() - 1);
+	}
+
+	/**
+	 * <p>
+	 * Serialize given data into a file.
+	 * </p>
+	 * @param FilePath the path to the file used to serialize the data.
+	 * @param pData the data to serialize into a file.
+	 */
+	public void serializeDataIntoFile(final String FilePath, final String pData) {
+		FileWriter fileWriter = null;
+		try {
+			fileWriter = new FileWriter(FilePath);
+			fileWriter.write(pData);
+			fileWriter.close();
+		} catch (IOException e) {
+			fLogger.warn("Error while writing into file : " + FilePath, e);
+		}
 	}
 
 	/**
@@ -111,10 +162,10 @@ public class TreesMergerWithScanner {
 
 	/**
 	 * <p>
-	 * Create a <code>java.util.Map</code> from a text file by using a <code>java.util.Scanner</code>
+	 * Create a <code>java.util.Map</code> from a file by using a <code>java.util.Scanner</code>
 	 * </p>
-	 * @param pFileScanner the <code>java.util.Scanner</code> used to parse the text file.
-	 * @param pMap the <code>java.util.Map</code> created from the text file.
+	 * @param pFileScanner the <code>java.util.Scanner</code> used to parse the file.
+	 * @param pMap the <code>java.util.Map</code> created from the file.
 	 */
 	public void getMapFromFileByScanner(final Scanner pFileScanner, Map<String, Integer> pMap) {
 		if (pMap == null) {
@@ -142,7 +193,7 @@ public class TreesMergerWithScanner {
 
 	/**
 	 * <p>
-	 * Create and return a <code>java.lang.String</code> representation of a <code>java.util.Map</code>
+	 * Create and return a <code>java.lang.String</code> representation of a <code>java.util.Map</code>.
 	 * </p>
 	 * @param pMap the <code>java.util.Map</code> used to create the returned <code>java.lang.String</code>
 	 * @return a <code>java.lang.String</code>
@@ -153,51 +204,11 @@ public class TreesMergerWithScanner {
 			result.append(entry.getKey());
 			result.append(Constants.COLON_DELIMITER);
 			result.append(entry.getValue());
-			result.append(Constants.NEW_LINE_STR);
+			result.append(Constants.NEW_LINE_PATTERN);
 		}
 		if (result.length() == 0) {
-			return result.toString();
+			return "";
 		}
 		return result.substring(0, result.length() - 1);
-	}
-
-	/**
-	 * <p>
-	 * Write a <code>java.lang.String</code> into a file given by its parameter.
-	 * </p>
-	 * @param pResultFilePath the path to the file used to serialize the <code>java.lang.String</code>
-	 * @param pData the <code>java.lang.String</code> to write into a file.
-	 */
-	public void serializeDataIntoFile(final String pResultFilePath, final String pData) {
-		FileWriter fileWriter = null;
-		try {
-			fileWriter = new FileWriter(pResultFilePath);
-			fileWriter.write(pData);
-			fileWriter.close();
-		} catch (IOException e) {
-			fLogger.warn("Error while writing into file : " + pResultFilePath, e);
-		}
-	}
-
-	/**
-	 * Create a copy of a file using a <code>java.util.Scanner</code>
-	 * @param pSourcePath the path to the file to copy.
-	 * @param pCopyFilePath the path to the created copy.
-	 * @throws IOException when an error occurs.
-	 */
-	public String copyFileData(final Scanner pFileScanner, final String pCopyFilePath) {
-		StringBuilder fileContent = new StringBuilder();
-		while (pFileScanner.hasNextLine()) {
-			String row = pFileScanner.nextLine();
-			RowParserWithScanner rowScanner = new RowParserWithScanner(row);
-			//No handle for lines with empty path part.
-			String nodePath = rowScanner.getNodePath();
-			if (nodePath == null || nodePath.length() == 0) {
-				continue;
-			}
-			fileContent.append(rowScanner.replaceDelimiters());
-			fileContent.append(Constants.NEW_LINE_STR);
-		}
-		return fileContent.substring(0, fileContent.length() - 1);
 	}
 }

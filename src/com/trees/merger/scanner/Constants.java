@@ -1,11 +1,14 @@
-package com.trees.merger;
+package com.trees.merger.scanner;
 
 /**
  * Constants class.
- * @author Idir.
+ * @author Idir DAHMOUH.
  */
 public final class Constants {
 
+	/**
+	 * Constructor.
+	 */
 	private Constants() {
 	}
 
@@ -24,18 +27,13 @@ public final class Constants {
 	/**
 	 * A new line character as a string.
 	 */
-	public static final String NEW_LINE_STR = "\n";
+	public static final String NEW_LINE_PATTERN = "\n";
 	/**
 	 * A dot.
 	 */
-	public static final String DOT_STR = ".";
+	public static final String DOT_PATTERN = ".";
 	/**
 	 * The samples directory.
 	 */
 	public static final String SAMPLES_DIR = "samples";
-
-	/**
-	 * The size of the buffer used to read data from text file.
-	 */
-	public static final int BUFFER_SIZE = 1024;
 }

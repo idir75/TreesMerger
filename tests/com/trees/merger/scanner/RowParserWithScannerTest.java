@@ -23,6 +23,7 @@ public class RowParserWithScannerTest extends TestCase {
 		RowParserWithScanner rowScanner = new RowParserWithScanner(row);
 		assertEquals(3, rowScanner.getNodeValue().intValue());
 	}
+
 	public void testNodeValue2() {
 		String row = "A1/B1 : 2";
 		RowParserWithScanner rowScanner = new RowParserWithScanner(row);
