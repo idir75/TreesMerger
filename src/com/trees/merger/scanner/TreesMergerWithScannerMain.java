@@ -5,7 +5,7 @@ import java.io.File;
 
 /**
  * Main class test.
- * @author Idir DAHMOUH.
+ * @author
  */
 public class TreesMergerWithScannerMain {
 
