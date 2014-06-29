@@ -14,7 +14,7 @@ import java.util.Scanner;
  * The <code>nodePathAsMapKeys</code> method creates a list of all possible node paths.
  * Example : by using the scanner to scan the path "A/B/C", the result is the list of paths : "A", "A/B", "A/B/C"
  * <p>
- * @author Idir DAHMOUH.
+ * @author
  */
 public class RowParserWithScanner {
 
